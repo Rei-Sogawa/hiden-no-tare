@@ -17,7 +17,12 @@ export default {
   },
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
-  css: [],
+  css: [
+    {
+      src: '~/node_modules/highlight.js/styles/atom-one-light.css',
+      lang: 'css',
+    },
+  ],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [],
@@ -37,7 +42,13 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/bootstrap
     'bootstrap-vue/nuxt',
+    '@nuxtjs/markdownit',
   ],
+
+  markdownit: {
+    injected: true,
+    use: ['markdown-it-highlightjs'],
+  },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {},
