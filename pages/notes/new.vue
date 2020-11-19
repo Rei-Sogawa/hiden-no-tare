@@ -1,24 +1,29 @@
 <template>
-  <div class="container">
-    <b-form class="d-flex flex-column h-100" @submit.prevent="onPostClick">
+  <b-container>
+    <b-form
+      class="d-flex flex-column h-100"
+      @submit.prevent="onPostButtonClick"
+    >
       <b-form-input
-        v-model="title"
+        :value="note.title"
         placeholder="Title"
         required
         class="mb-3"
+        @input="updateTitle"
       ></b-form-input>
       <b-row class="flex-fill">
         <b-col class="pr-0">
           <b-form-textarea
-            v-model="content"
+            :value="note.content"
             class="h-100"
             placeholder="Content"
+            @input="updateContent"
           ></b-form-textarea>
         </b-col>
         <b-col class="pl-0 h-100">
           <div
             class="preview py-2 px-2 mr-3 border rounded"
-            v-html="$md.render(content)"
+            v-html="$md.render(note.content)"
           ></div>
         </b-col>
       </b-row>
@@ -28,21 +33,31 @@
         >
       </div>
     </b-form>
-  </div>
+  </b-container>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+
+import { mapGetters, mapMutations, mapActions } from 'vuex'
+
 export default Vue.extend({
-  data() {
-    return {
-      title: '',
-      content: '',
-    }
+  computed: {
+    ...mapGetters('note', ['note']),
   },
   methods: {
-    onPostClick() {
-      console.log('call onPostClick')
+    ...mapMutations('note', ['SET_NOTE']),
+    ...mapActions('note', ['createNote']),
+    onPostButtonClick() {
+      this.createNote().then((res) => {
+        console.log(res)
+      })
+    },
+    updateTitle(title: string): void {
+      this.SET_NOTE(Object.assign({}, this.note, { title }))
+    },
+    updateContent(content: string): void {
+      this.SET_NOTE(Object.assign({}, this.note, { content }))
     },
   },
 })
