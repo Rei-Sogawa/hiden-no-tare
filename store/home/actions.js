@@ -5,7 +5,8 @@ const noteHistoriesRef = db.collection('note_histories')
 
 export default {
   async getNotes() {
-    const noteDocs = (await notesRef.orderBy('created_at', 'desc').get()).docs
+    const noteSnapshot = await notesRef.orderBy('created_at', 'desc').get()
+    const noteDocs = noteSnapshot.docs
     const noteHistoryQueries = noteDocs.map((noteDoc) =>
       noteHistoriesRef
         .where('note_id', '==', noteDoc.id)

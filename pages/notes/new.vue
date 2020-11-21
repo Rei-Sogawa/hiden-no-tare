@@ -1,11 +1,12 @@
 <template>
-  <b-container>
+  <b-container class="my-3 d-flex flex-column">
+    <h2 class="text-center">新規投稿</h2>
     <b-form
-      class="d-flex flex-column h-100"
+      class="d-flex flex-column h-100 flex-fill"
       @submit.prevent="onPostButtonClick"
     >
       <b-form-input
-        :value="note.title"
+        :value="title"
         placeholder="Title"
         required
         class="mb-3"
@@ -14,7 +15,7 @@
       <b-row class="flex-fill">
         <b-col class="pr-0">
           <b-form-textarea
-            :value="note.content"
+            :value="content"
             class="h-100"
             placeholder="Content"
             @input="updateContent"
@@ -23,12 +24,12 @@
         <b-col class="pl-0 h-100">
           <div
             class="preview py-2 px-2 mr-3 border rounded"
-            v-html="$md.render(note.content)"
+            v-html="$md.render(content)"
           ></div>
         </b-col>
       </b-row>
       <div>
-        <b-button type="submit" variant="success" class="my-2 float-right"
+        <b-button type="submit" variant="success" class="mt-2 float-right"
           >投稿する</b-button
         >
       </div>
@@ -43,21 +44,22 @@ import { mapGetters, mapMutations, mapActions } from 'vuex'
 
 export default Vue.extend({
   computed: {
-    ...mapGetters('note', ['note']),
+    ...mapGetters('notes/new', ['title', 'content']),
   },
   methods: {
-    ...mapMutations('note', ['SET_NOTE']),
-    ...mapActions('note', ['createNote']),
-    onPostButtonClick() {
-      this.createNote().then((res) => {
-        console.log(res)
-      })
+    ...mapMutations('notes/new', ['SET_TITLE', 'SET_CONTENT']),
+    ...mapActions('notes/new', ['createNote']),
+    updateTitle(title: string) {
+      this.SET_TITLE(title)
     },
-    updateTitle(title: string): void {
-      this.SET_NOTE(Object.assign({}, this.note, { title }))
+    updateContent(content: string) {
+      this.SET_CONTENT(content)
     },
-    updateContent(content: string): void {
-      this.SET_NOTE(Object.assign({}, this.note, { content }))
+    async onPostButtonClick() {
+      const noteHistoryRef = await this.createNote()
+      const noteHistoryDoc = await noteHistoryRef.get()
+      const noteId = noteHistoryDoc.data().note_id
+      console.log(noteId)
     },
   },
 })
