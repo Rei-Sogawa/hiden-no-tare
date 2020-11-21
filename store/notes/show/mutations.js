@@ -1,6 +1,6 @@
 export default {
-  SET_NOTES(state, notes) {
-    state.notes = notes
+  SET_NOTE(state, note) {
+    state.note = note
   },
   SET_NOTE_HISTORIES(state, noteHistories) {
     state.noteHistories = noteHistories
