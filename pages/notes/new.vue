@@ -2,7 +2,7 @@
   <b-container class="my-3 d-flex flex-column">
     <h2 class="text-center">新規投稿</h2>
     <b-form
-      class="d-flex flex-column h-100 flex-fill"
+      class="flex-fill d-flex flex-column"
       @submit.prevent="onPostButtonClick"
     >
       <b-form-input
@@ -46,20 +46,23 @@ export default Vue.extend({
   computed: {
     ...mapGetters('notes/new', ['title', 'content']),
   },
+  destroyed() {
+    this.resetState()
+  },
   methods: {
     ...mapMutations('notes/new', ['SET_TITLE', 'SET_CONTENT']),
-    ...mapActions('notes/new', ['createNote']),
-    updateTitle(title: string) {
+    ...mapActions('notes/new', ['createNote', 'resetState']),
+    updateTitle(title) {
       this.SET_TITLE(title)
     },
-    updateContent(content: string) {
+    updateContent(content) {
       this.SET_CONTENT(content)
     },
     async onPostButtonClick() {
       const noteHistoryRef = await this.createNote()
       const noteHistoryDoc = await noteHistoryRef.get()
       const noteId = noteHistoryDoc.data().note_id
-      console.log(noteId)
+      this.$router.push({ name: 'notes-id', params: { id: noteId } })
     },
   },
 })

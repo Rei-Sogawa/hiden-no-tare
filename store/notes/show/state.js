@@ -1,4 +1,4 @@
 export default () => ({
-  notes: null,
+  note: null,
   noteHistories: null,
 })
