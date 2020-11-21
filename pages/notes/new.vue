@@ -29,7 +29,7 @@
       </b-row>
       <div>
         <b-button type="submit" variant="success" class="my-2 float-right"
-          >Post</b-button
+          >投稿する</b-button
         >
       </div>
     </b-form>
