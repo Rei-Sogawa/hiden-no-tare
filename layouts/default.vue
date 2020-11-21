@@ -1,13 +1,17 @@
 <template>
   <div class="h-100 d-flex flex-column">
-    <b-navbar>
-      <b-navbar-nav>
-        <b-nav-item to="/notes/new">/notes/new</b-nav-item>
-      </b-navbar-nav>
-    </b-navbar>
     <Nuxt class="flex-fill" />
   </div>
 </template>
+
+<script lang="ts">
+import Vue from 'vue'
+import TheHeader from '@/components/TheHeader.vue'
+
+export default Vue.extend({
+  components: { TheHeader },
+})
+</script>
 
 <style>
 html,
