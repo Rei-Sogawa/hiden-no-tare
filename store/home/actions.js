@@ -27,13 +27,13 @@ const getLatestNoteHistories = async () => {
 }
 
 export default {
-  async fetchNotes(context) {
+  fetchNotes: async (context) => {
     context.commit('SET_NOTES', await getNotes())
   },
-  async fetchNoteHistories(context) {
+  fetchNoteHistories: async (context) => {
     context.commit('SET_NOTE_HISTORIES', await getLatestNoteHistories())
   },
-  resetState(context) {
+  resetState: (context) => {
     context.commit('SET_NOTES', null)
     context.commit('SET_NOTE_HISTORIES', null)
   },
