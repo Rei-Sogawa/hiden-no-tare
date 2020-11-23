@@ -1,9 +1,12 @@
 <template>
-  <div class="d-flex justify-content-end">
-    <b-button variant="primary" @click="onClickNewPostButton"
-      >新規投稿</b-button
-    >
-  </div>
+  <b-navbar>
+    <b-container>
+      <b-navbar-nav>
+        <b-nav-item :to="{ name: 'index' }">ホーム</b-nav-item>
+        <b-nav-item :to="{ name: 'notes-new' }">新規作成</b-nav-item>
+      </b-navbar-nav>
+    </b-container>
+  </b-navbar>
 </template>
 
 <script lang="ts">

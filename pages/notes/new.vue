@@ -1,5 +1,5 @@
 <template>
-  <b-container class="my-3 d-flex flex-column">
+  <b-container class="mb-3 d-flex flex-column">
     <h2 class="text-center">ノートの投稿</h2>
     <b-form
       class="flex-fill d-flex flex-column"
@@ -47,7 +47,7 @@ export default Vue.extend({
     }
   },
   methods: {
-    ...mapActions('notes/new', ['createNote']),
+    ...mapActions('notes', ['createNote']),
     async onClickPostButton() {
       const noteId = await this.createNote({
         title: this.title,
