@@ -1,13 +1,27 @@
 <template>
-  <b-container class="my-3">
-    <div v-if="!loading">
-      <b-card :title="latestNoteHistory.title">
-        <b-card-text>
-          <div v-html="$md.render(latestNoteHistory.content)"></div>
-        </b-card-text>
-      </b-card>
-    </div>
-  </b-container>
+  <div>
+    <b-container v-if="$route.name === 'notes-id'" class="my-3">
+      <div v-if="!loading" class="card">
+        <div class="card-body">
+          <div>
+            <h5>{{ latestNoteHistory.title }}</h5>
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm mb-3"
+              @click="onClickEditButton"
+            >
+              編集する
+            </button>
+          </div>
+          <div
+            class="card-text"
+            v-html="$md.render(latestNoteHistory.content)"
+          ></div>
+        </div>
+      </div>
+    </b-container>
+    <NuxtChild />
+  </div>
 </template>
 
 <script lang="ts">
@@ -19,6 +33,15 @@ export default Vue.extend({
     ...mapGetters('notes/show', ['note', 'noteHistories', 'latestNoteHistory']),
     loading() {
       return !this.note || !this.noteHistories
+    },
+  },
+  watch: {
+    '$route.name'(newVal, oldVal) {
+      if (newVal === 'notes-id' && oldVal === 'notes-id-edit') {
+        const id = this.$route.params.id
+        this.fetchNote(id)
+        this.fetchNoteHistories(id)
+      }
     },
   },
   created() {
@@ -35,6 +58,12 @@ export default Vue.extend({
       'fetchNoteHistories',
       'resetState',
     ]),
+    onClickEditButton() {
+      this.$router.push({
+        name: 'notes-id-edit',
+        params: { id: this.$route.params.id },
+      })
+    },
   },
 })
 </script>

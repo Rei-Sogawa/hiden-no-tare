@@ -1,24 +1,22 @@
 <template>
   <b-container class="my-3 d-flex flex-column">
-    <h2 class="text-center">新規投稿</h2>
+    <h2 class="text-center">ノートの投稿</h2>
     <b-form
       class="flex-fill d-flex flex-column"
-      @submit.prevent="onPostButtonClick"
+      @submit.prevent="onClickPostButton"
     >
       <b-form-input
-        :value="title"
+        v-model="title"
         placeholder="Title"
         required
         class="mb-3"
-        @input="updateTitle"
       ></b-form-input>
       <b-row class="flex-fill">
         <b-col class="pr-0">
           <b-form-textarea
-            :value="content"
+            v-model="content"
             class="h-100"
             placeholder="Content"
-            @input="updateContent"
           ></b-form-textarea>
         </b-col>
         <b-col class="pl-0 h-100">
@@ -39,29 +37,22 @@
 
 <script lang="ts">
 import Vue from 'vue'
-
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 
 export default Vue.extend({
-  computed: {
-    ...mapGetters('notes/new', ['title', 'content']),
-  },
-  destroyed() {
-    this.resetState()
+  data() {
+    return {
+      title: '',
+      content: '',
+    }
   },
   methods: {
-    ...mapMutations('notes/new', ['SET_TITLE', 'SET_CONTENT']),
-    ...mapActions('notes/new', ['createNote', 'resetState']),
-    updateTitle(title) {
-      this.SET_TITLE(title)
-    },
-    updateContent(content) {
-      this.SET_CONTENT(content)
-    },
-    async onPostButtonClick() {
-      const noteHistoryRef = await this.createNote()
-      const noteHistoryDoc = await noteHistoryRef.get()
-      const noteId = noteHistoryDoc.data().note_id
+    ...mapActions('notes/new', ['createNote']),
+    async onClickPostButton() {
+      const noteId = await this.createNote({
+        title: this.title,
+        content: this.content,
+      })
       this.$router.push({ name: 'notes-id', params: { id: noteId } })
     },
   },
