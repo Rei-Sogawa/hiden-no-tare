@@ -1,5 +1,5 @@
 <template>
-  <b-container v-if="!loading" class="h-100 py-3 d-flex flex-column">
+  <b-container class="h-100 pb-3 d-flex flex-column">
     <h2 class="text-center">ノートの更新</h2>
     <b-form
       class="flex-fill d-flex flex-column"
@@ -31,7 +31,7 @@
           type="submit"
           variant="success"
           class="mt-2 float-right"
-          :disabled="isButtonDisabled"
+          :disabled="noDiff"
           >更新する</b-button
         >
       </div>
@@ -42,64 +42,42 @@
 <script lang="ts">
 import Vue from 'vue'
 
-import firebase from '@/plugins/firebase'
-const db = firebase.firestore()
-// const notesRef = db.collection('notes')
-const noteHistoriesRef = db.collection('note_histories')
-
-// const getNote = async (id) => {
-//   const noteDoc = await notesRef.doc(id).get()
-//   return { id: notesRef.id, ...noteDoc.data() }
-// }
-const getLatestNoteHistory = async (id) => {
-  const noteHistoriesSnapshot = await noteHistoriesRef
-    .where('note_id', '==', id)
-    .orderBy('created_at', 'desc')
-    .limit(1)
-    .get()
-  const noteHistoryDoc = noteHistoriesSnapshot.docs[0]
-  return { id: noteHistoryDoc.id, ...noteHistoryDoc.data() }
-}
-const createNoteHistory = async (id, title, content) => {
-  return noteHistoriesRef.add({
-    title,
-    content,
-    created_at: firebase.firestore.FieldValue.serverTimestamp(),
-    note_id: id,
-  })
-}
+import { mapGetters, mapActions } from 'vuex'
 
 export default Vue.extend({
   data() {
     return {
       title: '',
       content: '',
-      latestNoteHistory: null,
     }
   },
   computed: {
-    loading() {
-      return !this.latestNoteHistory
+    ...mapGetters('notes', ['latestNoteHistory']),
+    noteId() {
+      return this.$route.params.id
     },
-    isButtonDisabled() {
+    noDiff() {
       return (
-        this.title === this.latestNoteHistory.title &&
-        this.content === this.latestNoteHistory.content
+        this.title === this.latestNoteHistory(this.noteId).title &&
+        this.content === this.latestNoteHistory(this.noteId).content
       )
     },
   },
-  async created() {
-    const latestNoteHistory = await getLatestNoteHistory(this.$route.params.id)
-    this.latestNoteHistory = latestNoteHistory
-    this.title = latestNoteHistory.title
-    this.content = latestNoteHistory.content
+  created() {
+    this.title = this.latestNoteHistory(this.noteId).title
+    this.content = this.latestNoteHistory(this.noteId).content
   },
   methods: {
+    ...mapActions('notes', ['updateNote']),
     async onClickUpdateButton() {
-      await createNoteHistory(this.$route.params.id, this.title, this.content)
+      await this.updateNote({
+        id: this.noteId,
+        title: this.title,
+        content: this.content,
+      })
       this.$router.push({
         name: 'notes-id',
-        params: { id: this.$route.params.id },
+        params: { id: this.noteId },
       })
     },
   },
