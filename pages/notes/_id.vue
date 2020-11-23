@@ -1,7 +1,7 @@
 <template>
   <div>
     <b-container v-if="isShowPage">
-      <b-card no-body>
+      <b-card no-body class="mb-3">
         <template #header>
           <b-icon
             icon="pencil"
@@ -23,11 +23,10 @@
   </div>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script>
 import { mapGetters } from 'vuex'
 
-export default Vue.extend({
+export default {
   computed: {
     ...mapGetters('notes', ['latestNoteHistory']),
     noteId() {
@@ -45,7 +44,7 @@ export default Vue.extend({
       })
     },
   },
-})
+}
 </script>
 
 <style scoped>

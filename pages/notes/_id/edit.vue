@@ -39,12 +39,10 @@
   </b-container>
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
-
+<script>
 import { mapGetters, mapActions } from 'vuex'
 
-export default Vue.extend({
+export default {
   data() {
     return {
       title: '',
@@ -81,7 +79,7 @@ export default Vue.extend({
       })
     },
   },
-})
+}
 </script>
 
 <style scoped>
