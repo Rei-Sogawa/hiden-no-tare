@@ -4,19 +4,17 @@ const notesRef = db.collection('notes')
 const noteHistoriesRef = db.collection('note_histories')
 
 export default {
-  createNote: async (context) => {
+  createNote: async (_, { title, content }) => {
     const noteRef = await notesRef.add({
       created_at: firebase.firestore.FieldValue.serverTimestamp(),
     })
-    return noteHistoriesRef.add({
-      title: context.state.title,
-      content: context.state.content,
+    const noteHistoryRef = await noteHistoriesRef.add({
+      title,
+      content,
       created_at: firebase.firestore.FieldValue.serverTimestamp(),
       note_id: noteRef.id,
     })
-  },
-  resetState: (context) => {
-    context.commit('SET_TITLE', '')
-    context.commit('SET_CONTENT', '')
+    const noteHistoryDoc = await noteHistoryRef.get()
+    return noteHistoryDoc.data().note_id
   },
 }
