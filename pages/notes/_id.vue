@@ -6,15 +6,17 @@
           <b-icon
             icon="pencil"
             class="float-right pencil-icon"
-            @click="onClickPencilIcon"
+            @click="onClickEdit"
           ></b-icon>
         </template>
         <b-card-body>
           <b-card-title>
-            {{ latestNoteHistory(noteId).title }}
+            {{ findNoteById(noteId).latestHistory.title }}
           </b-card-title>
           <b-card-text>
-            <div v-html="$md.render(latestNoteHistory(noteId).content)"></div>
+            <div
+              v-html="$md.render(findNoteById(noteId).latestHistory.content)"
+            ></div>
           </b-card-text>
         </b-card-body>
       </b-card>
@@ -28,7 +30,7 @@ import { mapGetters } from 'vuex'
 
 export default {
   computed: {
-    ...mapGetters('notes', ['latestNoteHistory']),
+    ...mapGetters('notes', ['findNoteById']),
     noteId() {
       return this.$route.params.id
     },
@@ -37,7 +39,7 @@ export default {
     },
   },
   methods: {
-    onClickPencilIcon() {
+    onClickEdit() {
       this.$router.push({
         name: 'notes-id-edit',
         params: { id: this.noteId },

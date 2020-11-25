@@ -31,7 +31,7 @@
           type="submit"
           variant="success"
           class="mt-2 float-right"
-          :disabled="noDiff"
+          :disabled="!hasDifference"
           >更新する</b-button
         >
       </div>
@@ -50,20 +50,19 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('notes', ['latestNoteHistory']),
+    ...mapGetters('notes', ['findNoteById']),
     noteId() {
       return this.$route.params.id
     },
-    noDiff() {
-      return (
-        this.title === this.latestNoteHistory(this.noteId).title &&
-        this.content === this.latestNoteHistory(this.noteId).content
-      )
+    hasDifference() {
+      const { title, content } = this.findNoteById(this.noteId).latestHistory
+      return this.title !== title || this.content !== content
     },
   },
   created() {
-    this.title = this.latestNoteHistory(this.noteId).title
-    this.content = this.latestNoteHistory(this.noteId).content
+    const { title, content } = this.findNoteById(this.noteId).latestHistory
+    this.title = title
+    this.content = content
   },
   methods: {
     ...mapActions('notes', ['updateNote']),

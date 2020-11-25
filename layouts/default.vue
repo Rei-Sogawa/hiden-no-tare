@@ -28,7 +28,7 @@ export default {
         if (!snapshot.exists) {
           await this.createUser({ uid, displayName })
         }
-        await this.setCurrentUser({ displayName })
+        await this.setCurrentUser({ id: uid, displayName })
       } else {
         this.setCurrentUser(null)
       }
