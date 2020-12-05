@@ -11,7 +11,9 @@ module.exports = {
     'plugin:prettier/recommended',
     'plugin:nuxt/recommended',
   ],
-  plugins: ['prettier'],
+  plugins: ['prettier', 'simple-import-sort'],
   // add your custom rules here
-  rules: {},
+  rules: {
+    'simple-import-sort/imports': 'error',
+  },
 }

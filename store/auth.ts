@@ -1,6 +1,7 @@
-import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
-import { auth, GoogleAuthProvider } from '@/plugins/firebaseApp'
 import firebase from 'firebase'
+import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
+
+import { auth, GoogleAuthProvider } from '@/plugins/firebaseApp'
 
 export interface IAuthState {
   uid: string | null
