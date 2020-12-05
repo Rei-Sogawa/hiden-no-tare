@@ -39,7 +39,7 @@ export default class Users extends VuexModule implements IUserState {
   }
 
   @Mutation
-  CLEAT_STATE() {
+  CLEAR_STATE() {
     if (this.storedUsersUnsubscribe) {
       this.storedUsersUnsubscribe()
     }
@@ -74,7 +74,7 @@ export default class Users extends VuexModule implements IUserState {
   }
 
   @Action
-  private async storeUsers() {
+  async storeUsers() {
     const querySnapshot = await usersRef.get()
     querySnapshot.forEach((doc) => {
       const user = new User({ id: doc.id, ...doc.data() })
@@ -83,7 +83,7 @@ export default class Users extends VuexModule implements IUserState {
   }
 
   @Action
-  private watchUsers() {
+  watchUsers() {
     const unsubscribe = usersRef.onSnapshot((querySnapshot) => {
       querySnapshot.docChanges().forEach((change) => {
         const user = new User({ id: change.doc.id, ...change.doc.data() })

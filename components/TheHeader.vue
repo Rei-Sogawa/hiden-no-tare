@@ -3,6 +3,7 @@
     <b-container>
       <b-navbar-nav>
         <template v-if="isSignedIn">
+          <b-nav-item :to="{ name: 'notes-new' }">新規ノート</b-nav-item>
           <b-nav-item @click="onSignOutClick">Sign Out</b-nav-item>
         </template>
         <b-nav-item v-else @click="onSignInClick">Sign In</b-nav-item>
@@ -13,6 +14,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
+
 import { authStore } from '@/store'
 
 @Component

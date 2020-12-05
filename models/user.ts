@@ -12,4 +12,12 @@ export class User implements IUser {
   constructor({ id = '', displayName = '', photoURL = '' }: Partial<IUser>) {
     Object.assign(this, { id, displayName, photoURL })
   }
+
+  toObject(): {} {
+    return {
+      id: this.id,
+      displayName: this.displayName,
+      photoURL: this.photoURL,
+    }
+  }
 }

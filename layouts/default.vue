@@ -1,6 +1,7 @@
 <template>
-  <div>
+  <div class="h-100 d-flex flex-column">
     <TheHeader />
+    <Nuxt class="flex-fill" />
   </div>
 </template>
 
@@ -8,7 +9,7 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 
 import { auth } from '@/plugins/firebaseApp'
-import { authStore, usersStore } from '@/store'
+import { authStore, notesStore, usersStore } from '@/store'
 
 @Component
 export default class Default extends Vue {
@@ -25,6 +26,7 @@ export default class Default extends Vue {
 
   fetch() {
     usersStore.initialize()
+    notesStore.initialize()
   }
 
   get currentUser() {
@@ -38,3 +40,12 @@ export default class Default extends Vue {
   }
 }
 </script>
+
+<style>
+html,
+body,
+#__nuxt,
+#__layout {
+  height: 100%;
+}
+</style>
