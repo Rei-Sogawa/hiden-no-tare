@@ -1,8 +1,9 @@
+import firebase from 'firebase'
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 
 import { INoteForm, Note } from '@/models/note'
 import { NoteHistory } from '@/models/noteHistory'
-import { db } from '@/plugins/firebaseApp'
+import { db, FieldValue } from '@/plugins/firebaseApp'
 
 import { authStore } from '.'
 
@@ -20,8 +21,18 @@ export default class Notes extends VuexModule implements INotesState {
   storedNotes: Note[] = []
   storedNotesUnsubscribe?: () => void = undefined
 
+  get notes() {
+    return [...this.storedNotes].sort((a, b) =>
+      b.updatedAt && a.updatedAt ? b.updatedAt.seconds - a.updatedAt.seconds : 0
+    )
+  }
+
+  get findNoteById(): (id: string) => Note | undefined {
+    return (id: string) => this.storedNotes.find((note) => note.id === id)
+  }
+
   // [tagName, tag 数][]
-  // tag 数が多い順に並べたもの
+  // を tag 数が多い順に並べたもの
   get tags(): [string, number][] {
     const tagNames: string[] = this.storedNotes.reduce(
       (pre, curr) => pre.concat(curr.tags),
@@ -116,30 +127,54 @@ export default class Notes extends VuexModule implements INotesState {
     this.SET_NOTES_UNSUBSCRIBE(unsubscribe)
   }
 
-  // notes collection に対する CRUD 捜査
+  // notes collection に対する CRUD 操作
   @Action
   // notes/${noteId}/noteHistories に対する Create も行う必要がある
   // cloud function の firestore trigger を使う？
   create(noteForm: INoteForm) {
-    const latestHistory = {
+    const noteHistory = new NoteHistory({
       title: noteForm.title,
       content: noteForm.content,
       authorId: authStore.uid!,
-    }
+    })
     const note = new Note({
       tags: noteForm.tags,
-      latestHistory,
+      latestHistory: noteHistory.toObject(),
       authorId: authStore.uid!,
     })
     const noteRef = notesRef.doc()
     note.id = noteRef.id
     const noteHistoriesRef = noteRef.collection('noteHistories')
-    const noteHistory = new NoteHistory(latestHistory)
     return Promise.all([
       noteRef.set(note.toObject()),
       noteHistoriesRef.add(noteHistory.toObject()),
     ]).then(() => {
       return note
     })
+  }
+
+  @Action
+  update(payload: { id: string; noteForm: INoteForm }) {
+    const { id, noteForm } = payload
+    const noteHistory = new NoteHistory({
+      title: noteForm.title,
+      content: noteForm.content,
+      authorId: authStore.uid!,
+    })
+    const note: Note = this.findNoteById(id) as Note
+    const updatedNote: Note = new Note(note.toObject())
+    updatedNote.tags = noteForm.tags
+    updatedNote.latestHistory = noteHistory.toObject()
+    updatedNote.updatedAt = FieldValue.serverTimestamp() as firebase.firestore.Timestamp
+    return Promise.all([
+      notesRef.doc(id).update(updatedNote.toObject()),
+      notesRef.doc(id).collection('noteHistories').add(noteHistory.toObject()),
+    ])
+  }
+
+  @Action
+  updateOnlyTag(payload: { id: string; noteForm: INoteForm }) {
+    const { id, noteForm } = payload
+    return notesRef.doc(id).update({ tags: noteForm.tags })
   }
 }
