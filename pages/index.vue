@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Logo />
+    <h1 class="text-center">Hiden no Tare</h1>
   </div>
 </template>
 

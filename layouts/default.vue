@@ -9,34 +9,21 @@
 import { Component, Vue } from 'nuxt-property-decorator'
 
 import { auth } from '@/plugins/firebaseApp'
-import { authStore, notesStore, usersStore } from '@/store'
+import { authStore, usersStore } from '@/store'
 
 @Component
 export default class Default extends Vue {
   created() {
-    auth.onAuthStateChanged((firebaseUser) => {
+    auth.onAuthStateChanged(async (firebaseUser) => {
       if (firebaseUser) {
-        authStore.doSignIn(firebaseUser)
-        usersStore.update(firebaseUser)
+        await authStore.doSignIn(firebaseUser)
+        await usersStore.update(firebaseUser)
+        this.$router.push({ name: 'notes' })
       } else {
-        authStore.doSignOut()
+        await authStore.doSignOut()
+        this.$router.push({ name: 'index' })
       }
     })
-  }
-
-  fetch() {
-    usersStore.initialize()
-    notesStore.initialize()
-  }
-
-  get currentUser() {
-    return usersStore.currentUser
-  }
-
-  get user() {
-    if (authStore.uid !== undefined) {
-      return usersStore.findUserById(authStore.uid!)
-    }
   }
 }
 </script>

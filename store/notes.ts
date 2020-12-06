@@ -20,6 +20,31 @@ export default class Notes extends VuexModule implements INotesState {
   storedNotes: Note[] = []
   storedNotesUnsubscribe?: () => void = undefined
 
+  // [tagName, tag 数][]
+  // tag 数が多い順に並べたもの
+  get tags(): [string, number][] {
+    const tagNames: string[] = this.storedNotes.reduce(
+      (pre, curr) => pre.concat(curr.tags),
+      [] as string[]
+    )
+    const uniqueTagNames: string[] = tagNames.filter(
+      (x, i, self) => self.indexOf(x) === i
+    )
+    const tagNameAndCount: [
+      string,
+      number
+    ][] = uniqueTagNames.map((tagName) => [
+      tagName,
+      tagNames.filter((_tagName) => _tagName === tagName).length,
+    ])
+    return tagNameAndCount.sort((a, b) => b[1] - a[1])
+  }
+
+  get notesFilterByTag() {
+    return (tag: string) =>
+      this.storedNotes.filter((note) => note.tags.includes(tag))
+  }
+
   @Mutation
   SET_INITIALIZED(value: boolean) {
     this.initialized = value
