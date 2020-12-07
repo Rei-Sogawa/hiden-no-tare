@@ -22,7 +22,7 @@ export default class Notes extends VuexModule implements INotesState {
 
   // [tagName, tag 数][]
   // tag 数が多い順に並べたもの
-  get tags(): [string, number][] {
+  get tags(): { name: string; count: number }[] {
     const tagNames: string[] = this.storedNotes.reduce(
       (pre, curr) => pre.concat(curr.tags),
       [] as string[]
@@ -30,14 +30,16 @@ export default class Notes extends VuexModule implements INotesState {
     const uniqueTagNames: string[] = tagNames.filter(
       (x, i, self) => self.indexOf(x) === i
     )
-    const tagNameAndCount: [
-      string,
-      number
-    ][] = uniqueTagNames.map((tagName) => [
-      tagName,
-      tagNames.filter((_tagName) => _tagName === tagName).length,
-    ])
-    return tagNameAndCount.sort((a, b) => b[1] - a[1])
+    const tagNameAndCount: {
+      name: string
+      count: number
+    }[] = uniqueTagNames.map((tagName) => {
+      return {
+        name: tagName,
+        count: tagNames.filter((_tagName) => _tagName === tagName).length,
+      }
+    })
+    return tagNameAndCount.sort((a, b) => b.count - a.count)
   }
 
   get notesFilterByTag() {

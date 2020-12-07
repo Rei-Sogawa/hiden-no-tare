@@ -6,12 +6,12 @@
       <h3>タグ一覧</h3>
       <b-button
         v-for="tag in tags"
-        :key="tag[0]"
+        :key="tag.name"
         class="mr-2"
-        :variant="tag[0] === activeTagName ? 'success' : 'secondary'"
+        :variant="tag.name === activeTagName ? 'success' : 'secondary'"
         @click="onClickTag(tag)"
       >
-        {{ `${tag[0]} (${tag[1]})` }}
+        {{ `${tag.name} (${tag.count})` }}
       </b-button>
     </div>
 
@@ -70,11 +70,11 @@ export default class NotesIndex extends Vue {
     return formattedYearDateTime(timestamp)
   }
 
-  onClickTag(tag: [string, number]) {
-    if (tag[0] === this.activeTagName) {
+  onClickTag(tag: { name: string; count: number }) {
+    if (tag.name === this.activeTagName) {
       this.$router.push({ name: 'notes' })
     } else {
-      this.$router.push({ name: 'notes', query: { tagName: tag[0] } })
+      this.$router.push({ name: 'notes', query: { tagName: tag.name } })
     }
   }
 }
