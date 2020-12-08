@@ -12,6 +12,7 @@
         v-model="noteForm.tags"
         placeholder="Tag"
         tag-variant="success"
+        add-button-variant="outline-success"
         class="mb-3"
       ></b-form-tags>
       <b-row class="flex-fill">
@@ -47,7 +48,7 @@
 <script lang="ts">
 import { Component, Vue } from 'nuxt-property-decorator'
 
-import { INoteForm, Note } from '@/models/note'
+import { INoteForm } from '@/models/note'
 import { notesStore } from '@/store'
 
 @Component
@@ -67,10 +68,10 @@ export default class NotesEdit extends Vue {
   }
 
   get hasDiff() {
-    return this.hasNoteDiff || this.hasNoteHistoryDiff
+    return this.hasNoteTagDiff || this.hasNoteHistoryDiff
   }
 
-  get hasNoteDiff() {
+  get hasNoteTagDiff() {
     return this.note
       ? JSON.stringify([...this.note.tags].sort()) !==
           JSON.stringify([...this.noteForm.tags].sort())
@@ -91,11 +92,12 @@ export default class NotesEdit extends Vue {
   }
 
   async onSubmit() {
-    if (!this.hasNoteHistoryDiff) {
+    if (!this.hasNoteHistoryDiff && this.hasNoteTagDiff) {
       await notesStore.updateOnlyTag({ id: this.id, noteForm: this.noteForm })
-    } else {
+    } else if (this.hasNoteHistoryDiff) {
       await notesStore.update({ id: this.id, noteForm: this.noteForm })
     }
+    this.$router.push({ name: 'notes-id', params: { id: this.id } })
   }
 }
 </script>

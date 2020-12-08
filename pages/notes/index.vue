@@ -24,9 +24,6 @@
         <NuxtLink :to="{ name: 'notes-id', params: { id: note.id } }"
           ><h5>{{ note.latestHistory.title }}</h5></NuxtLink
         >
-        <NuxtLink :to="{ name: 'notes-id-edit', params: { id: note.id } }"
-          ><h5>{{ note.latestHistory.title }} edit</h5></NuxtLink
-        >
         <div class="text-muted">
           <div>更新日: {{ formattedDate(note.updatedAt) }}</div>
         </div>

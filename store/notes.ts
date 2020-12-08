@@ -103,7 +103,7 @@ export default class Notes extends VuexModule implements INotesState {
 
   @Action
   async storeNotes() {
-    const querySnapshot = await notesRef.orderBy('updatedAt', 'desc').get()
+    const querySnapshot = await notesRef.get()
     querySnapshot.forEach((doc) => {
       const note = new Note({ id: doc.id, ...doc.data() })
       this.STORE_NOTE(note)
@@ -112,18 +112,16 @@ export default class Notes extends VuexModule implements INotesState {
 
   @Action
   watchNotes() {
-    const unsubscribe = notesRef
-      .orderBy('updatedAt', 'desc')
-      .onSnapshot((querySnapshot) => {
-        querySnapshot.docChanges().forEach((change) => {
-          const note = new Note({ id: change.doc.id, ...change.doc.data() })
-          if (change.type === 'added' || change.type === 'modified') {
-            this.STORE_NOTE(note)
-          } else if (change.type === 'removed') {
-            this.REMOVE_NOTE(note)
-          }
-        })
+    const unsubscribe = notesRef.onSnapshot((querySnapshot) => {
+      querySnapshot.docChanges().forEach((change) => {
+        const note = new Note({ id: change.doc.id, ...change.doc.data() })
+        if (change.type === 'added' || change.type === 'modified') {
+          this.STORE_NOTE(note)
+        } else if (change.type === 'removed') {
+          this.REMOVE_NOTE(note)
+        }
       })
+    })
     this.SET_NOTES_UNSUBSCRIBE(unsubscribe)
   }
 
@@ -161,8 +159,8 @@ export default class Notes extends VuexModule implements INotesState {
       content: noteForm.content,
       authorId: authStore.uid!,
     })
-    const note: Note = this.findNoteById(id) as Note
-    const updatedNote: Note = new Note(note.toObject())
+    const note = this.findNoteById(id)
+    const updatedNote = new Note(note!.toObject())
     updatedNote.tags = noteForm.tags
     updatedNote.latestHistory = noteHistory.toObject()
     updatedNote.updatedAt = FieldValue.serverTimestamp() as firebase.firestore.Timestamp
