@@ -109,12 +109,15 @@ export default class NotesEdit extends Vue {
         content: this.content,
         createdAt: FieldValue.serverTimestamp() as firebase.firestore.Timestamp,
       }
-      await this.$firestoreRefs.note.update({
+      await db.collection('notes').doc(this.$route.params.id).update({
         tags: this.tags,
         latestNoteHistory: noteHistory,
       })
-    } else {
-      await this.$firestoreRefs.note.update({ tags: this.tags })
+    } else if (this.isDiffInTags) {
+      await db
+        .collection('notes')
+        .doc(this.$route.params.id)
+        .update({ tags: this.tags })
     }
     this.$router.push({
       name: 'notes-id',

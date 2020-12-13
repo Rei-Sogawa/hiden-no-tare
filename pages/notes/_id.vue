@@ -192,7 +192,11 @@ export default class NotesIndex extends Vue {
       content: this.commentContent,
       createdAt: FieldValue.serverTimestamp() as firebase.firestore.Timestamp,
     }
-    await this.$firestoreRefs.note.collection('comments').add(comment)
+    await db
+      .collection('notes')
+      .doc(this.$route.params.id)
+      .collection('comments')
+      .add(comment)
     this.commentContent = ''
   }
 
