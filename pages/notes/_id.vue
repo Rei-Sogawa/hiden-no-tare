@@ -21,8 +21,8 @@
 
               <div class="mb-3">
                 <b-badge
-                  v-for="(tag, index) in note.tags"
-                  :key="index"
+                  v-for="tag in note.tags"
+                  :key="tag"
                   class="mr-1"
                   variant="success"
                   >{{ tag }}</b-badge
@@ -196,7 +196,19 @@ export default class NotesIndex extends Vue {
     this.commentContent = ''
   }
 
-  onClickNoteHistory() {}
+  onClickNoteHistory(noteHistory: INoteHistory) {
+    const afterNoteHistoryIndex = this.noteHistories!.findIndex(
+      (_history) => _history.id === noteHistory.id
+    )
+    const beforeNoteHistoryIndex = afterNoteHistoryIndex + 1
+    const after = this.noteHistories![afterNoteHistoryIndex].id
+    const before = this.noteHistories![beforeNoteHistoryIndex].id
+    this.$router.push({
+      name: 'notes-id-diff',
+      params: { id: this.$route.params.id },
+      query: { after, before },
+    })
+  }
 }
 </script>
 
