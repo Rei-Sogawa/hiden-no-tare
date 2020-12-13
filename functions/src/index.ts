@@ -20,3 +20,21 @@ export const onCreateNoteDoc = functions.firestore
       .doc(context.eventId)
       .set(noteHistory)
   })
+
+export const onUpdateNoteDoc = functions.firestore
+  .document('notes/{noteId}')
+  .onUpdate((change, context) => {
+    const newVal = change.after.data().latestNoteHistory
+    const oldVal = change.before.data().latestNoteHistory
+    const isDiffInLatestNoteHistory =
+      newVal.title !== oldVal.title || newVal.content !== oldVal.content
+    if (isDiffInLatestNoteHistory) {
+      return db
+        .collection(`notes/${context.params.noteId}/noteHistories`)
+        .doc(context.eventId)
+        .set(change.after.data().latestNoteHistory)
+    } else {
+      // return がないルートがあると linter に怒られるので
+      return Promise.resolve()
+    }
+  })

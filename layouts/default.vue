@@ -1,7 +1,7 @@
 <template>
   <div class="h-100 d-flex flex-column">
     <TheHeader />
-    <Nuxt class="flex-fill" />
+    <Nuxt />
   </div>
 </template>
 

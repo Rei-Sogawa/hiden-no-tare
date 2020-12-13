@@ -20,14 +20,14 @@ export default {
     },
   ],
 
-  plugins: ['@/plugins/firebaseApp'],
+  plugins: ['@/plugins/firebaseApp', '@/plugins/vuefire'],
 
   components: true,
 
   buildModules: ['@nuxt/typescript-build', '@nuxtjs/stylelint-module'],
 
   modules: [
-    'bootstrap-vue/nuxt',
+    ['bootstrap-vue/nuxt', { icons: true }],
     [
       '@nuxtjs/markdownit',
       {

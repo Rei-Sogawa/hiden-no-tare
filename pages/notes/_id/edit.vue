@@ -1,6 +1,6 @@
 <template>
   <b-container class="flex-fill mb-3 d-flex flex-column">
-    <h2 class="text-center">ノート新規作成</h2>
+    <h2 class="text-center">ノート編集</h2>
     <b-form class="flex-fill d-flex flex-column" @submit.prevent="onSubmit">
       <b-form-input
         v-model="title"
@@ -48,7 +48,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'nuxt-property-decorator'
+import { Component, Vue, Watch } from 'nuxt-property-decorator'
 import { authStore } from '@/store'
 import firebase from 'firebase'
 import { db, FieldValue } from '@/plugins/firebaseApp'
@@ -56,30 +56,70 @@ import { INote } from '@/types/note'
 import { INoteHistory } from '@/types/noteHistory'
 
 @Component
-export default class NotesNew extends Vue {
+export default class NotesEdit extends Vue {
   title: string = ''
   tags: string[] = []
   content: string = ''
+  note: INote | null = null
 
   get canSubmit(): boolean {
+    return this.isFormFullfilled && this.isDiffInNote
+  }
+
+  get isFormFullfilled(): boolean {
     return Boolean(this.title.trim()) && Boolean(this.content.trim())
   }
 
+  get isDiffInNote(): boolean {
+    return this.isDiffInLatestNoteHistory || this.isDiffInTags
+  }
+
+  get isDiffInLatestNoteHistory(): boolean {
+    return (
+      this.title !== this.note!.latestNoteHistory.title ||
+      this.content !== this.note!.latestNoteHistory.content
+    )
+  }
+
+  get isDiffInTags(): boolean {
+    return (
+      JSON.stringify([...this.note!.tags].sort()) !==
+      JSON.stringify([...this.tags].sort())
+    )
+  }
+
+  @Watch('note')
+  function(newVal: INote, oldVal: INote) {
+    if (!oldVal && newVal) {
+      this.title = newVal.latestNoteHistory.title
+      this.content = newVal.latestNoteHistory.content
+      this.tags = [...newVal.tags]
+    }
+  }
+
+  created() {
+    this.$bind('note', db.collection('notes').doc(this.$route.params.id))
+  }
+
   async onSubmit() {
-    const noteHistory: Omit<INoteHistory, 'id'> = {
-      authorId: authStore.uid!,
-      title: this.title,
-      content: this.content,
-      createdAt: FieldValue.serverTimestamp() as firebase.firestore.Timestamp,
+    if (this.isDiffInLatestNoteHistory) {
+      const noteHistory: Omit<INoteHistory, 'id'> = {
+        authorId: authStore.uid!,
+        title: this.title,
+        content: this.content,
+        createdAt: FieldValue.serverTimestamp() as firebase.firestore.Timestamp,
+      }
+      await this.$firestoreRefs.note.update({
+        tags: this.tags,
+        latestNoteHistory: noteHistory,
+      })
+    } else {
+      await this.$firestoreRefs.note.update({ tags: this.tags })
     }
-    const note: Omit<INote, 'id'> = {
-      authorId: authStore.uid!,
-      tags: this.tags,
-      latestNoteHistory: noteHistory,
-      createdAt: FieldValue.serverTimestamp() as firebase.firestore.Timestamp,
-    }
-    const { id } = await db.collection('notes').add(note)
-    this.$router.push({ name: 'notes-id', params: { id } })
+    this.$router.push({
+      name: 'notes-id',
+      params: { id: this.$route.params.id },
+    })
   }
 }
 </script>
