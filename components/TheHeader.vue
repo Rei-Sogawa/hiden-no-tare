@@ -21,12 +21,19 @@ export default class TheHeader extends Vue {
     return authStore.isSignedIn
   }
 
-  onSignInClick() {
-    authStore.signIn()
+  async onSignInClick() {
+    try {
+      await authStore.signIn()
+      this.$router.push({ name: 'notes' })
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error(error)
+    }
   }
 
-  onSignOutClick() {
-    authStore.signOut()
+  async onSignOutClick() {
+    await authStore.signOut()
+    this.$router.push({ name: 'index' })
   }
 }
 </script>

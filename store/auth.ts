@@ -30,8 +30,8 @@ export default class Auth extends VuexModule implements IAuthState {
   }
 
   @Action
-  doSignIn(firebaseUser: firebase.User) {
-    const { uid } = firebaseUser
+  doSignIn(authenticatedUser: firebase.User) {
+    const { uid } = authenticatedUser
     this.SET_UID(uid)
   }
 
