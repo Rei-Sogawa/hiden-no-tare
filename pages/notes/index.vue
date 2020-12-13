@@ -10,7 +10,6 @@
           placeholder="検索キーワード"
         ></b-form-input>
       </b-form>
-
       <hr />
 
       <b-button
@@ -25,7 +24,14 @@
       <hr />
       <br />
 
-      <h3>ノート一覧</h3>
+      <h3>
+        ノート一覧
+        <span v-if="activeTag">（タグで検索: "{{ activeTag }}"）</span>
+        <span v-if="activeSearchText"
+          >（キーワードで検索: "{{ activeSearchText }}"）</span
+        >
+      </h3>
+
       <b-list-group>
         <b-list-group-item v-for="note in activeNotes" :key="note.id">
           <NuxtLink :to="{ name: 'notes-id', params: { id: note.id } }">
@@ -128,7 +134,7 @@ export default class NotesIndex extends Vue {
 
   formattedDate(timestamp: any) {
     const seconds = timestamp.seconds || timestamp._seconds
-    return format(fromUnixTime(seconds), 'yyyy/MM/dd HH:mm')
+    return seconds ? format(fromUnixTime(seconds), 'yyyy/MM/dd HH:mm') : ''
   }
 
   onClickTag(tag: string) {
