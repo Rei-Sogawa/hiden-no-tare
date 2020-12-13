@@ -13,7 +13,12 @@ export default {
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
   },
 
-  css: [],
+  css: [
+    {
+      src: '~/node_modules/highlight.js/styles/github.css',
+      lang: 'css',
+    },
+  ],
 
   plugins: ['@/plugins/firebaseApp'],
 
@@ -21,11 +26,16 @@ export default {
 
   buildModules: ['@nuxt/typescript-build', '@nuxtjs/stylelint-module'],
 
-  modules: ['bootstrap-vue/nuxt'],
+  modules: [
+    'bootstrap-vue/nuxt',
+    [
+      '@nuxtjs/markdownit',
+      {
+        injected: true,
+        use: ['markdown-it-highlightjs'],
+      },
+    ],
+  ],
 
   build: {},
-
-  router: {
-    middleware: 'auth',
-  },
 }

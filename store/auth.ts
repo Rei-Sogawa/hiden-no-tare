@@ -15,6 +15,10 @@ export default class Auth extends VuexModule implements IAuthState {
     this.uid = val
   }
 
+  get currentUserUid(): string | null {
+    return this.uid
+  }
+
   get isSignedIn(): boolean {
     return !!this.uid
   }
