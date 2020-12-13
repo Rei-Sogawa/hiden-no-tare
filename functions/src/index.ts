@@ -4,15 +4,19 @@ import * as admin from 'firebase-admin'
 admin.initializeApp()
 const db = admin.firestore()
 
-export const onCreateAuthUser = functions.auth.user().onCreate(async (user) => {
-  const authenticatedUser = await admin.auth().getUser(user.uid)
-  return db.collection('users').doc(user.uid).set({
-    name: authenticatedUser.displayName,
+export const onCreateAuthUser = functions
+  .region('asia-northeast1')
+  .auth.user()
+  .onCreate(async (user) => {
+    const authenticatedUser = await admin.auth().getUser(user.uid)
+    return db.collection('users').doc(user.uid).set({
+      name: authenticatedUser.displayName,
+    })
   })
-})
 
-export const onCreateNoteDoc = functions.firestore
-  .document('notes/{noteId}')
+export const onCreateNoteDoc = functions
+  .region('asia-northeast1')
+  .firestore.document('notes/{noteId}')
   .onCreate((snap, context) => {
     const noteHistory = snap.data().latestNoteHistory
     return db
@@ -21,8 +25,9 @@ export const onCreateNoteDoc = functions.firestore
       .set(noteHistory)
   })
 
-export const onUpdateNoteDoc = functions.firestore
-  .document('notes/{noteId}')
+export const onUpdateNoteDoc = functions
+  .region('asia-northeast1')
+  .firestore.document('notes/{noteId}')
   .onUpdate((change, context) => {
     const newVal = change.after.data().latestNoteHistory
     const oldVal = change.before.data().latestNoteHistory
