@@ -78,7 +78,7 @@ export default class NotesNew extends Vue {
     const note: INoteDoc = {
       authorId: authStore.uid!,
       tags: this.tags,
-      latestHistory: noteHistory,
+      latestNoteHistory: noteHistory,
       createdAt: FieldValue.serverTimestamp() as firebase.firestore.Timestamp,
       updatedAt: FieldValue.serverTimestamp() as firebase.firestore.Timestamp,
     }

@@ -14,9 +14,9 @@ export const onCreateAuthUser = functions.auth.user().onCreate(async (user) => {
 export const onCreateNoteDoc = functions.firestore
   .document('notes/{noteId}')
   .onCreate((snap, context) => {
-    const history = snap.data().latestHistory
+    const noteHistory = snap.data().latestNoteHistory
     return db
-      .collection(`notes/${context.params.noteId}/histories`)
+      .collection(`notes/${context.params.noteId}/noteHistories`)
       .doc(context.eventId)
-      .set(history)
+      .set(noteHistory)
   })
