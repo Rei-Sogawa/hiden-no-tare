@@ -3,9 +3,11 @@
     <b-container>
       <b-navbar-nav>
         <template v-if="isSignedIn">
-          <b-nav-item @click="onSignOutClick">Sign Out</b-nav-item>
+          <b-nav-item :to="{ name: 'notes' }">ホーム</b-nav-item>
+          <b-nav-item :to="{ name: 'notes-new' }">新規ノート</b-nav-item>
+          <b-nav-item @click="onClickSignOut">Sign Out</b-nav-item>
         </template>
-        <b-nav-item v-else @click="onSignInClick">Sign In</b-nav-item>
+        <b-nav-item v-else @click="onClickSignIn">Sign In</b-nav-item>
       </b-navbar-nav>
     </b-container>
   </b-navbar>
@@ -21,11 +23,11 @@ export default class TheHeader extends Vue {
     return authStore.isSignedIn
   }
 
-  onSignInClick() {
+  onClickSignIn() {
     authStore.signIn()
   }
 
-  onSignOutClick() {
+  onClickSignOut() {
     authStore.signOut()
   }
 }

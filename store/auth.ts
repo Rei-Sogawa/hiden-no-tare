@@ -15,6 +15,10 @@ export default class Auth extends VuexModule implements IAuthState {
     this.uid = val
   }
 
+  get currentUserUid(): string | null {
+    return this.uid
+  }
+
   get isSignedIn(): boolean {
     return !!this.uid
   }
@@ -30,8 +34,8 @@ export default class Auth extends VuexModule implements IAuthState {
   }
 
   @Action
-  doSignIn(firebaseUser: firebase.User) {
-    const { uid } = firebaseUser
+  doSignIn(authenticatedUser: firebase.User) {
+    const { uid } = authenticatedUser
     this.SET_UID(uid)
   }
 

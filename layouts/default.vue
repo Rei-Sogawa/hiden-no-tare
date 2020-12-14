@@ -1,6 +1,7 @@
 <template>
-  <div>
+  <div class="h-100 d-flex flex-column">
     <TheHeader />
+    <Nuxt />
   </div>
 </template>
 
@@ -12,13 +13,24 @@ import { authStore } from '@/store'
 @Component
 export default class Default extends Vue {
   created() {
-    auth.onAuthStateChanged((firebaseUser) => {
+    auth.onAuthStateChanged(async (firebaseUser) => {
       if (firebaseUser) {
-        authStore.doSignIn(firebaseUser)
+        await authStore.doSignIn(firebaseUser)
+        this.$router.push({ name: 'notes' })
       } else {
-        authStore.doSignOut()
+        await authStore.doSignOut()
+        this.$router.push({ name: 'index' })
       }
     })
   }
 }
 </script>
+
+<style>
+html,
+body,
+#__nuxt,
+#__layout {
+  height: 100%;
+}
+</style>

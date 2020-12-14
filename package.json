@@ -13,12 +13,18 @@
   },
   "dependencies": {
     "@nuxt/typescript-runtime": "^2.0.0",
+    "@nuxtjs/markdownit": "^1.2.10",
+    "algoliasearch": "^4.8.3",
     "bootstrap": "^4.5.2",
     "bootstrap-vue": "^2.17.3",
     "core-js": "^3.6.5",
+    "date-fns": "^2.16.1",
+    "diff": "^5.0.0",
     "firebase": "^8.1.2",
+    "markdown-it-highlightjs": "^3.4.0",
     "nuxt": "^2.14.6",
-    "nuxt-property-decorator": "^2.8.8"
+    "nuxt-property-decorator": "^2.8.8",
+    "vuefire": "^2.2.5"
   },
   "devDependencies": {
     "@nuxt/types": "^2.14.6",
@@ -27,6 +33,7 @@
     "@nuxtjs/eslint-config-typescript": "^3.0.0",
     "@nuxtjs/eslint-module": "^2.0.0",
     "@nuxtjs/stylelint-module": "^4.0.0",
+    "@types/diff": "^4.0.2",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.10.0",
     "eslint-config-prettier": "^6.12.0",

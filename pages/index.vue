@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <Logo />
-  </div>
+  <h1 class="text-center">Hiden no Tare</h1>
 </template>
 
 <script lang="ts">
